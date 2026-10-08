@@ -13,6 +13,81 @@ export const people = [
   { id: "maya-chen-2", name: "Ravi Shah", initials: "RS", role: "Security Analyst", team: "Trust & Security", location: "Boston", score: 74, commits: 582, prs: 25, color: "violet", status: "Away" },
 ];
 
+export const profileDetails = {
+  "maya-chen": {
+    handle: "mayacodes", bio: "Building search systems that feel a little more like thinking. Staff engineer by title, systems gardener by temperament.",
+    yearsExperience: 8, solved: 684, bestStreak: 32, followers: 842, previousRole: "Senior Software Engineer", previousCompany: "Stripe", previousYears: "2020 — 2023",
+    skills: [["Distributed systems", 96], ["TypeScript", 94], ["Search & retrieval", 92], ["Python", 89], ["Kubernetes", 82], ["Rust", 77]],
+    languages: [["TypeScript", 34], ["Python", 29], ["Rust", 18], ["Go", 12], ["Other", 7]],
+  },
+  "evan-brooks": {
+    handle: "evanbuilds", bio: "Making ranking systems measurable, explainable, and useful in the real world. Always happy to dig into a stubborn benchmark.",
+    yearsExperience: 7, solved: 512, bestStreak: 24, followers: 614, previousRole: "Machine Learning Engineer", previousCompany: "Wayfair", previousYears: "2021 — 2024",
+    skills: [["Search ranking", 96], ["Python", 94], ["Rust", 91], ["Evaluation systems", 89], ["Data analysis", 84], ["TypeScript", 76]],
+    languages: [["Python", 39], ["Rust", 27], ["TypeScript", 16], ["SQL", 12], ["Other", 6]],
+  },
+  "amara-okafor": {
+    handle: "amara-ml", bio: "Turning research ideas into dependable machine-learning systems, with a soft spot for better evaluation and long-tail quality.",
+    yearsExperience: 6, solved: 438, bestStreak: 19, followers: 492, previousRole: "Research Engineer", previousCompany: "DeepMind", previousYears: "2021 — 2024",
+    skills: [["Machine learning", 95], ["Python", 94], ["PyTorch", 92], ["Model evaluation", 89], ["Data pipelines", 84], ["Search relevance", 81]],
+    languages: [["Python", 48], ["SQL", 19], ["Rust", 13], ["TypeScript", 12], ["Other", 8]],
+  },
+  "priya-nair": {
+    handle: "priyanairdev", bio: "Building thoughtful interfaces and developer tools that make complex systems feel clear, fast, and welcoming.",
+    yearsExperience: 7, solved: 392, bestStreak: 27, followers: 721, previousRole: "Frontend Engineer", previousCompany: "Shopify", previousYears: "2020 — 2023",
+    skills: [["TypeScript", 96], ["React", 95], ["Accessibility", 93], ["Design systems", 91], ["CSS", 88], ["Testing", 84]],
+    languages: [["TypeScript", 51], ["CSS", 18], ["JavaScript", 16], ["Python", 8], ["Other", 7]],
+  },
+  "ben-carter": {
+    handle: "bencarterinfra", bio: "Building the reliable foundations teams can move quickly on: clear service ownership, useful observability, and calm deploys.",
+    yearsExperience: 9, solved: 476, bestStreak: 41, followers: 538, previousRole: "Platform Engineer", previousCompany: "Twilio", previousYears: "2019 — 2023",
+    skills: [["Kubernetes", 96], ["Go", 94], ["Cloud infrastructure", 92], ["Terraform", 90], ["Observability", 88], ["Distributed systems", 84]],
+    languages: [["Go", 42], ["HCL", 21], ["Python", 17], ["TypeScript", 11], ["Other", 9]],
+  },
+  "jonah-reed": {
+    handle: "jonahsec", bio: "Helping product teams ship safely through practical threat modeling, identity controls, and security that fits the workflow.",
+    yearsExperience: 8, solved: 551, bestStreak: 29, followers: 463, previousRole: "Application Security Engineer", previousCompany: "Cloudflare", previousYears: "2020 — 2023",
+    skills: [["Threat modeling", 96], ["Application security", 94], ["Rust", 90], ["Identity & access", 89], ["Policy systems", 86], ["Incident response", 82]],
+    languages: [["Rust", 31], ["Go", 24], ["Python", 21], ["SQL", 14], ["Other", 10]],
+  },
+  "nina-patel": {
+    handle: "ninapatel", bio: "Connecting product thinking and engineering craft to make everyday workflows feel effortless and genuinely useful.",
+    yearsExperience: 5, solved: 318, bestStreak: 18, followers: 387, previousRole: "Software Engineer", previousCompany: "Notion", previousYears: "2022 — 2024",
+    skills: [["Product engineering", 94], ["TypeScript", 92], ["React", 90], ["UX instrumentation", 86], ["SQL", 81], ["Testing", 79]],
+    languages: [["TypeScript", 43], ["JavaScript", 23], ["SQL", 16], ["Python", 10], ["Other", 8]],
+  },
+  "kai-tanaka": {
+    handle: "kaitinfra", bio: "Keeping infrastructure predictable at scale, from cluster automation to the networking details behind reliable services.",
+    yearsExperience: 8, solved: 427, bestStreak: 36, followers: 419, previousRole: "Site Reliability Engineer", previousCompany: "Mercari", previousYears: "2020 — 2023",
+    skills: [["Kubernetes", 96], ["Go", 93], ["Linux", 91], ["Networking", 89], ["Terraform", 87], ["Reliability", 85]],
+    languages: [["Go", 38], ["HCL", 22], ["Python", 19], ["Shell", 13], ["Other", 8]],
+  },
+  "tess-williams": {
+    handle: "tessmakes", bio: "Working at the boundary of design and code to make interfaces accessible, expressive, and easy to understand.",
+    yearsExperience: 6, solved: 284, bestStreak: 21, followers: 506, previousRole: "Design Technologist", previousCompany: "Figma", previousYears: "2021 — 2024",
+    skills: [["Interaction design", 96], ["TypeScript", 91], ["Accessibility", 90], ["CSS", 89], ["Prototyping", 88], ["React", 84]],
+    languages: [["TypeScript", 37], ["CSS", 29], ["JavaScript", 21], ["Python", 7], ["Other", 6]],
+  },
+  "omar-haddad": {
+    handle: "omarops", bio: "Making production systems observable and resilient, and helping teams turn incident learnings into durable improvements.",
+    yearsExperience: 10, solved: 493, bestStreak: 45, followers: 572, previousRole: "Reliability Engineer", previousCompany: "Elastic", previousYears: "2018 — 2023",
+    skills: [["Reliability engineering", 96], ["Go", 94], ["Kubernetes", 92], ["OpenTelemetry", 90], ["Incident response", 89], ["AWS", 85]],
+    languages: [["Go", 39], ["Python", 22], ["Shell", 17], ["SQL", 13], ["Other", 9]],
+  },
+  "leo-martin": {
+    handle: "leomartin-dev", bio: "Building backend services and event-driven systems with a focus on performance, clean interfaces, and operational clarity.",
+    yearsExperience: 7, solved: 406, bestStreak: 25, followers: 441, previousRole: "Backend Engineer", previousCompany: "Datadog", previousYears: "2020 — 2023",
+    skills: [["Go", 96], ["Distributed systems", 93], ["Kafka", 91], ["PostgreSQL", 88], ["API design", 86], ["Performance", 83]],
+    languages: [["Go", 46], ["SQL", 22], ["Python", 14], ["TypeScript", 10], ["Other", 8]],
+  },
+  "maya-chen-2": {
+    handle: "ravishahsec", bio: "Finding useful security signals in noisy systems and building audit trails teams can trust when the details matter.",
+    yearsExperience: 5, solved: 347, bestStreak: 17, followers: 326, previousRole: "Security Engineer", previousCompany: "Okta", previousYears: "2022 — 2024",
+    skills: [["Security analytics", 92], ["Python", 91], ["Threat detection", 89], ["Kafka", 84], ["SQL", 83], ["Audit systems", 81]],
+    languages: [["Python", 38], ["SQL", 23], ["Go", 17], ["JavaScript", 12], ["Other", 10]],
+  },
+};
+
 export const projects = [
   { id: "neural-search", repo: "alpha-labs/neural-search", name: "neural-search", description: "Hybrid vector + keyword retrieval with learned ranking for the next generation of product search.", status: "Shipping", stars: 284, updated: "12m ago", stack: ["Rust", "Python", "Qdrant", "PyTorch"], team: ["MC", "EB", "AO", "PN"] },
   { id: "agent-runtime", repo: "devmesh/agent-runtime", name: "agent-runtime", description: "A safe, observable execution sandbox for tool-using agents in production.", status: "Beta", stars: 321, updated: "2h ago", stack: ["TypeScript", "Rust", "Temporal", "Docker"], team: ["MC", "EB", "BC", "AO"] },

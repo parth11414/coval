@@ -111,7 +111,7 @@ export default function OverviewPage({ navigate, notify }) {
           <div className="hero-actions">
             <button type="button" className="button button-quiet" onClick={() => navigate("chat")}><Icon name="message" size={16} /> Message</button>
             <button type="button" className="button button-quiet" onClick={() => notify("Connection request sent to Maya Chen.")}><Icon name="plus" size={17} /> Connect</button>
-            <button type="button" className="button button-primary" onClick={() => navigate("engineering/maya-chen")}><Icon name="users" size={16} /> Full profile</button>
+            <button type="button" className="button button-primary" onClick={() => navigate(`profile/${maya.id}`)}><Icon name="users" size={16} /> Full profile</button>
           </div>
         </div>
         <p className="hero-bio">Building search systems that feel a little more like thinking. Staff engineer by title, systems gardener by temperament.</p>
@@ -157,7 +157,7 @@ export default function OverviewPage({ navigate, notify }) {
               <span className="overview-project-path">{project.repo}</span>
               <p>{project.description}</p>
               <div className="project-tags">{project.stack.slice(0, 3).map((tag) => <span className="tech-tag" key={tag}>{tag}</span>)}</div>
-              <div className="overview-project-footer"><span>CONTRIBUTORS</span><AvatarStack initials={project.team} limit={3} /><small>{project.stars} <Icon name="star" size={12} /> · {project.updated}</small></div>
+              <div className="overview-project-footer"><span>CONTRIBUTORS</span><AvatarStack initials={project.team} limit={3} onPersonSelect={(person) => navigate(`profile/${person.id}`)} /><small>{project.stars} <Icon name="star" size={12} /> · {project.updated}</small></div>
             </article>
           ))}
         </div>
@@ -172,7 +172,7 @@ export default function OverviewPage({ navigate, notify }) {
           <div className="overview-timeline-list">
             {recentWork.map((item) => (
               <div className="overview-timeline-item" key={`${item.person}-${item.time}`}>
-                <Avatar initials={item.initials} name={item.person} color={item.color} size="sm" />
+                <button type="button" className="activity-avatar-button" aria-label={`View ${item.person} profile`} onClick={() => navigate(`profile/${people.find((person) => person.name === item.person)?.id || "maya-chen"}`)}><Avatar initials={item.initials} name={item.person} color={item.color} size="sm" /></button>
                 <div className="overview-timeline-content">
                   <div className="overview-timeline-meta"><span>{item.type}</span><strong>{item.person}</strong><small>{item.repo} · {item.time}</small></div>
                   <h3>{item.title}</h3><p>{item.description}</p>

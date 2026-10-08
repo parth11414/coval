@@ -11,6 +11,7 @@ const paths = {
   chevronRight: <><path d="m9 18 6-6-6-6" /></>,
   clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
   code: <><path d="m8 17-5-5 5-5M16 7l5 5-5 5M14 4l-4 16" /></>,
+  compare: <><path d="m17 3 4 4-4 4M3 7h18M7 21l-4-4 4-4m-4 4h18" /></>,
   filter: <><path d="M4 7h16M7 12h10m-7 5h4" /></>,
   folder: <><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></>,
   git: <><circle cx="6" cy="4" r="2" /><circle cx="18" cy="8" r="2" /><circle cx="6" cy="20" r="2" /><path d="M6 6v12m0-7a6 6 0 0 0 6 6h1a5 5 0 0 0 5-5V10" /></>,

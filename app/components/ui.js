@@ -48,12 +48,15 @@ export function Sparkline({ color = "var(--violet)" }) {
   );
 }
 
-export function AvatarStack({ initials, limit = 3 }) {
+export function AvatarStack({ initials, limit = 3, onPersonSelect }) {
   return (
     <span className="avatar-stack">
       {initials.slice(0, limit).map((item) => {
         const person = people.find((candidate) => candidate.initials === item);
-        return <Avatar key={item} initials={item} name={person?.name || item} color={person?.color || "mint"} size="xs" />;
+        const avatar = <Avatar initials={item} name={person?.name || item} color={person?.color || "mint"} size="xs" />;
+        return onPersonSelect && person
+          ? <button key={item} type="button" className="avatar-profile-trigger" aria-label={`View ${person.name} profile`} title={person.name} onClick={() => onPersonSelect(person)}>{avatar}</button>
+          : <span key={item}>{avatar}</span>;
       })}
       {initials.length > limit && <span className="avatar-overflow">+{initials.length - limit}</span>}
     </span>

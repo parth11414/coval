@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Brand from "./brand";
 import Icon from "./dashboard-icon";
+import SettingsDialog from "./settings-dialog";
 import { navItems, people, projects, teams } from "../data/dashboard-data";
 import { Avatar } from "./ui";
 
@@ -12,12 +13,16 @@ export default function DashboardShell({
   theme,
   drawerOpen,
   searchOpen,
+  settingsOpen,
   toast,
   onDrawerToggle,
   onDrawerClose,
   onThemeToggle,
   onSearchOpen,
   onSearchClose,
+  onSettingsOpen,
+  onSettingsClose,
+  onThemeChange,
   onNavigate,
 }) {
   const [search, setSearch] = useState("");
@@ -46,13 +51,14 @@ export default function DashboardShell({
     const query = search.trim().toLowerCase();
     const routeResults = navItems.map((item) => ({ type: "Section", title: item.label, route: item.id, icon: item.icon }));
     const projectResults = projects.slice(0, 6).map((item) => ({ type: "Repository", title: item.name, route: "projects", icon: "repo" }));
-    const personResults = people.slice(0, 6).map((item) => ({ type: "Person", title: item.name, route: `engineering/${item.id}`, icon: "users" }));
+    const personResults = people.slice(0, 6).map((item) => ({ type: "Person", title: item.name, route: `profile/${item.id}`, icon: "users" }));
     return [...routeResults, ...projectResults, ...personResults]
       .filter((item) => !query || `${item.title} ${item.type}`.toLowerCase().includes(query))
       .slice(0, 9);
   }, [search]);
 
-  const go = (target) => onNavigate(target.split("/")[0]);
+  const go = (target) => onNavigate(target);
+  const activeRoute = route === "profile" ? "engineering" : route;
   const sidebarOpen = isMobile ? drawerOpen : desktopSidebarOpen;
   const overlayOpen = isMobile ? drawerOpen : desktopOverlayOpen;
   const toggleSidebar = () => {
@@ -95,8 +101,8 @@ export default function DashboardShell({
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className={`nav-link${route === item.id ? " active" : ""}`}
-                  aria-current={route === item.id ? "page" : undefined}
+                  className={`nav-link${activeRoute === item.id ? " active" : ""}`}
+                  aria-current={activeRoute === item.id ? "page" : undefined}
                   onClick={(event) => { event.preventDefault(); navigateFromSidebar(item.id); }}
                 >
                   <Icon name={item.icon} size={19} />
@@ -123,9 +129,9 @@ export default function DashboardShell({
         </div>
         <div className="sidebar-bottom">
           <div className="sidebar-actions">
-            <button type="button" className="sidebar-action" onClick={() => navigateFromSidebar("overview")}><Icon name="settings" size={17} /> Settings</button>
+            <button type="button" className="sidebar-action" onClick={() => { onSettingsOpen(); onDrawerClose(); setDesktopSidebarOpen(false); setDesktopOverlayOpen(false); }}><Icon name="settings" size={17} /> Settings</button>
           </div>
-          <button type="button" className="profile-chip" onClick={() => navigateFromSidebar("engineering/maya-chen")}>
+          <button type="button" className="profile-chip" onClick={() => navigateFromSidebar("profile/maya-chen")}>
             <Avatar initials="MC" name="Maya Chen" color="mint" size="sm" />
             <span><strong>Maya Chen</strong><small>Staff Engineer</small></span>
             <Icon name="chevronRight" size={17} />
@@ -154,7 +160,7 @@ export default function DashboardShell({
             <button type="button" className="icon-button theme-button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title="Toggle theme" onClick={onThemeToggle}><Icon name={theme === "dark" ? "sun" : "moon"} size={19} /></button>
             <span className="top-divider" aria-hidden="true" />
             <span className="topbar-date" aria-label="Current date">THU, OCT 08</span>
-            <button type="button" className="topbar-avatar" aria-label="Maya Chen profile" onClick={() => onNavigate("engineering/maya-chen")}><Avatar initials="MC" name="Maya Chen" color="mint" size="xs" /></button>
+            <button type="button" className="topbar-avatar" aria-label="Maya Chen profile" onClick={() => onNavigate("profile/maya-chen")}><Avatar initials="MC" name="Maya Chen" color="mint" size="xs" /></button>
           </div>
         </header>
 
@@ -182,6 +188,7 @@ export default function DashboardShell({
           </section>
         </div>
       )}
+      {settingsOpen && <SettingsDialog theme={theme} onThemeChange={onThemeChange} onNavigate={onNavigate} onClose={onSettingsClose} />}
       {toast && <div className="toast-message" role="status">{toast}</div>}
     </div>
   );

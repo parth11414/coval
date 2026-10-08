@@ -40,7 +40,7 @@ export default function ProjectsPage({ navigate }) {
             <div className="project-hover">
               <p>{project.description}</p>
               <div className="project-tags">{project.stack.map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}</div>
-              <div className="hover-contributors"><span>CONTRIBUTORS</span><div>{project.team.slice(0, 5).map((initials) => {const person = people.find((candidate) => candidate.initials === initials);return <button key={initials} type="button" aria-label={person?.name || initials} title={person?.name || initials} onClick={() => navigate("engineering")}><Avatar initials={initials} name={person?.name || initials} color={person?.color || "mint"} size="sm" /></button>;})}</div><small>{project.team.length} people · click to explore</small></div>
+              <div className="hover-contributors"><span>CONTRIBUTORS</span><div>{project.team.slice(0, 5).map((initials) => {const person = people.find((candidate) => candidate.initials === initials);return <button key={initials} type="button" aria-label={person?.name || initials} title={person?.name || initials} onClick={() => person && navigate(`profile/${person.id}`)}><Avatar initials={initials} name={person?.name || initials} color={person?.color || "mint"} size="sm" /></button>;})}</div><small>{project.team.length} people · click to explore</small></div>
             </div>
           </article>
         ))}
