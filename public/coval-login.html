@@ -826,16 +826,33 @@
       oauthRow.querySelectorAll("[data-provider]").forEach(button => {
         button.addEventListener("click", async () => {
           const provider = button.dataset.provider;
-          oauthRow.querySelectorAll("button").forEach(item => item.disabled = true);
+          oauthRow.querySelectorAll("button").forEach(item => {
+            item.disabled = true;
+          });
           toast.textContent = "CONNECTING TO " + provider.toUpperCase() + "…";
           toast.classList.add("visible");
-          const { error } = await supabase.auth.signInWithOAuth({
-            provider,
-            options: { redirectTo: "https://coval-xyz.vercel.app/dashboard" }
-          });
-          if (error) {
+
+          try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+              provider,
+              options: {
+                redirectTo: "https://coval-xyz.vercel.app/dashboard",
+                skipBrowserRedirect: true
+              }
+            });
+
+            if (error) throw error;
+            if (!data?.url) {
+              throw new Error("Authorization URL was not returned.");
+            }
+
+            // Start OAuth in the top-level window, not inside the homepage iframe.
+            window.top.location.assign(data.url);
+          } catch (error) {
             toast.textContent = "SIGN-IN ERROR · " + error.message;
-            oauthRow.querySelectorAll("button").forEach(item => item.disabled = false);
+            oauthRow.querySelectorAll("button").forEach(item => {
+              item.disabled = false;
+            });
           }
         });
       });
