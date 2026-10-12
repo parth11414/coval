@@ -54,13 +54,8 @@ export default function AuthGate({ children }) {
   };
 
   if (status !== "ready") {
-    return <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#f7f7f5", color: "#333", fontFamily: "Arial, sans-serif" }}>
-      {status === "error" ? "Unable to verify your session. Please refresh or sign in again." : "Verifying your COVAL session…"}
-    </main>;
+    return <main className="auth-state" role="status"><span className="auth-state-mark">C</span><p>{status === "error" ? "We couldn’t verify your session." : "Opening your workspace…"}</p>{status === "error" && <button type="button" onClick={() => window.location.reload()}>Refresh and try again</button>}</main>;
   }
 
-  return <>
-    <button type="button" onClick={logout} aria-label="Sign out of COVAL" style={{ position: "fixed", zIndex: 1000, right: 18, bottom: 18, border: "1px solid #d1d5db", borderRadius: 9, background: "#fff", color: "#222", padding: "10px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 18px #0001" }}>Sign out</button>
-    {children}
-  </>;
+  return typeof children === "function" ? children(logout) : children;
 }

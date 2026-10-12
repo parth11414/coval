@@ -20,7 +20,7 @@ export default function MessagesPage({ notify }) {
   const active = threads.find((thread) => thread.id === activeId) || threads[0];
   const participant = people.find((person) => person.name === active.name || person.id === active.id);
   const project = projects.find((item) => item.name === active.name || item.id === active.id);
-  const filteredThreads = useMemo(() => threads.filter((thread) => thread.name.toLowerCase().includes(query.toLowerCase())), [query, threads]);
+  const filteredThreads = useMemo(() => threads.filter((thread) => thread.name.toLowerCase().includes(query.trim().toLowerCase())), [query, threads]);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -34,73 +34,73 @@ export default function MessagesPage({ notify }) {
 
   function createThread() {
     const id = `draft-${Date.now()}`;
-    const thread = { id, name: "New conversation", kind: "person", preview: "Start a new conversation", time: "Now", unread: 0, color: "mint" };
+    const thread = { id, name: "New local conversation", kind: "person", preview: "Start a sample conversation", time: "Now", unread: 0, color: "mint" };
     setThreads((current) => [thread, ...current]);
     setMessageMap((current) => ({ ...current, [id]: [] }));
     selectThread(id);
-    notify("New local conversation created.");
+    notify("Created a local demo conversation. Nothing was sent.");
   }
 
-  function sendMessage(event) {
+  function addLocalMessage(event) {
     event.preventDefault();
     const text = draft.trim();
     if (!text) return;
     const now = new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
-    const sentMessage = { id: `${Date.now()}-${Math.random()}`, from: "Maya", text, time: now, mine: true };
-    setMessageMap((current) => ({ ...current, [activeId]: [...(current[activeId] || []), sentMessage] }));
+    const message = { id: `${Date.now()}-${Math.random()}`, from: "Maya", text, time: now, mine: true };
+    setMessageMap((current) => ({ ...current, [activeId]: [...(current[activeId] || []), message] }));
     setThreads((current) => current.map((thread) => thread.id === activeId ? { ...thread, preview: `You: ${text}`, time: "Now" } : thread));
     setDraft("");
+    notify("Added to this local demo only. No message was sent.");
   }
 
-  return (
-    <>
-      <PageHeading eyebrow="TEAM COMMUNICATION / MESSAGES" title="Good work happens together." description="Project rooms and teammate conversations, in one calm place." action={<button type="button" className="button button-primary" onClick={createThread}><Icon name="plus" size={17} /> New message</button>} />
-      <section className={`chat-workspace surface-card${showList ? " mobile-list-open" : ""}${showDetails ? " details-open" : ""}`} aria-label="Team messages">
-        <aside className="chat-sidebar">
-          <div className="chat-sidebar-heading"><div><span className="eyebrow">INBOX</span><h2>Messages <span>{threads.length}</span></h2></div><button type="button" className="quiet-icon" aria-label="New conversation" onClick={createThread}><Icon name="plus" size={18} /></button></div>
-          <label className="search-field chat-search"><Icon name="search" size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search conversations…" aria-label="Search conversations" /></label>
-          <div className="conversation-list">
-            {filteredThreads.map((thread) => {
-              const person = people.find((candidate) => candidate.name === thread.name || candidate.id === thread.id);
-              return <button type="button" className={`conversation-item${thread.id === activeId ? " active" : ""}`} key={thread.id} onClick={() => selectThread(thread.id)} aria-current={thread.id === activeId ? "true" : undefined}>
-                <span className="conversation-avatar">{person ? <Avatar initials={person.initials} name={person.name} color={person.color} size="md" online={person.status === "Online"} /> : <span className={`thread-icon thread-${thread.color}`}><Icon name={thread.id.startsWith("draft-") ? "message" : "repo"} size={17} /></span>}</span>
-                <span className="conversation-copy"><span className="conversation-title">{thread.name}</span><span className="conversation-preview">{thread.preview}</span></span>
-                <span className="conversation-meta"><time>{thread.time}</time>{thread.unread > 0 && <i className="unread-badge">{thread.unread}</i>}</span>
-              </button>;
-            })}
-            {!filteredThreads.length && <div className="conversation-empty">No conversations found.</div>}
-          </div>
-          <div className="chat-sidebar-footer"><Avatar initials="MC" name="Maya Chen" color="mint" size="sm" online /><span><b>Maya Chen</b><small>Atlas Labs</small></span><span className="chat-online-indicator" title="Online" /></div>
-        </aside>
-        <section className="chat-main" aria-label={`Conversation with ${active.name}`}>
-          <header className="chat-header">
-            <button type="button" className="quiet-icon mobile-chat-back" aria-label="Show conversations" onClick={() => setShowList(true)}><Icon name="arrowRight" size={18} /></button>
-            <span className="chat-header-avatar">{participant ? <Avatar initials={participant.initials} name={participant.name} color={participant.color} size="md" online={participant.status === "Online"} /> : <span className={`thread-icon thread-${active.color}`}><Icon name={active.kind === "person" ? "message" : "repo"} size={17} /></span>}</span>
-            <div className="chat-header-copy"><h2>{active.name}</h2><span>{participant ? `${participant.role} · ${participant.status}` : active.id.startsWith("draft-") ? "New local conversation" : "Project room · Atlas Labs"}</span></div>
-            <button type="button" className={`quiet-icon${showDetails ? " selected" : ""}`} aria-label="Toggle conversation details" aria-expanded={showDetails} onClick={() => setShowDetails((value) => !value)}><Icon name="info" size={18} /></button>
-            <button type="button" className="quiet-icon" aria-label="More conversation options" title="Demo conversation"><Icon name="more" size={18} /></button>
-          </header>
-          <div className="message-history" role="log" aria-live="polite" aria-relevant="additions">
-            <div className="message-day-divider"><span>TODAY</span></div>
-            {messages.map((message) => <article key={message.id} className={`message-row${message.mine ? " message-mine" : ""}`}>
-              {!message.mine && <Avatar initials={participant?.initials || message.from.slice(0, 2).toUpperCase()} name={message.from} color={participant?.color || active.color} size="xs" />}
-              <div className="message-content"><div className="message-sender">{message.mine ? "You" : message.from}<time>{message.time}</time></div><p className="message-bubble">{message.text}</p></div>
-              {message.mine && <Avatar initials="MC" name="Maya Chen" color="mint" size="xs" />}
-            </article>)}
-            {!messages.length && <div className="message-empty"><span className="thread-icon thread-mint"><Icon name="message" size={20} /></span><strong>This conversation is ready</strong><p>Send a message to get things started.</p></div>}
-            <div ref={messageEndRef} />
-          </div>
-          <form className="message-composer" onSubmit={sendMessage}>
-            <label className="composer-label" htmlFor="message-draft">Write a message</label>
-            <div className="composer-box"><textarea id="message-draft" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder={`Message ${active.name}…`} rows={1} /><div className="composer-actions"><span>Enter to send <i>·</i> Shift + Enter for a new line</span><button type="submit" className="send-button" disabled={!draft.trim()} aria-label="Send message"><Icon name="send" size={16} /></button></div></div>
-          </form>
-        </section>
-        <aside className="chat-details">
-          <div className="details-heading"><span className="eyebrow">CONVERSATION</span><button type="button" className="quiet-icon mobile-details-close" aria-label="Close conversation details" onClick={() => setShowDetails(false)}><Icon name="x" size={18} /></button></div>
-          {participant ? <><Avatar initials={participant.initials} name={participant.name} color={participant.color} size="xl" online={participant.status === "Online"} /><h3>{participant.name}</h3><p>{participant.role}</p><span className="details-status"><i /> {participant.status}</span><div className="details-divider" /><span className="eyebrow">TEAM</span><span className="details-value">{participant.team}</span><span className="eyebrow">LOCATION</span><span className="details-value">{participant.location}</span><div className="details-divider" /><span className="eyebrow">SHARED PROJECTS</span><div className="shared-projects">{projects.filter((item) => item.team.includes(participant.initials)).slice(0, 3).map((item) => <div key={item.id}><Icon name="repo" size={15} /><span>{item.name}</span></div>)}</div></> : <><span className={`details-project-icon thread-${active.color}`}><Icon name={active.id.startsWith("draft-") ? "message" : "repo"} size={20} /></span><h3>{active.name}</h3><p>{active.id.startsWith("draft-") ? "Private conversation" : "Project room"}</p><div className="details-divider" /><span className="eyebrow">PROJECT</span><span className="details-value">{project?.repo || "Atlas Labs"}</span><span className="eyebrow">MEMBERS</span><div className="details-people">{(project?.team || ["MC", "EB", "AO"]).slice(0, 4).map((initials) => {const person = people.find((candidate) => candidate.initials === initials);return <Avatar key={initials} initials={initials} name={person?.name || initials} color={person?.color || "mint"} size="sm" />;})}</div></>}
-          <div className="details-footnote"><Icon name="lock" size={14} /> Visible to project members</div>
-        </aside>
+  return <>
+    <PageHeading title="Messages & project rooms." description="Sample conversations for exploring the workspace. Replies stay local to this page and are not sent." action={<button type="button" className="button button-secondary" onClick={createThread}><Icon name="plus" size={16} /> New local conversation</button>} />
+    <section className={`chat-workspace${showList ? " mobile-list-open" : ""}${showDetails ? " details-open" : ""}`} aria-label="Sample conversations">
+      <aside className="chat-sidebar">
+        <div className="chat-sidebar-heading"><h2>Conversation index <span>{threads.length}</span></h2><button type="button" className="quiet-icon" aria-label="Start local conversation" onClick={createThread}><Icon name="plus" size={17} /></button></div>
+        <label className="search-field chat-search"><Icon name="search" size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a conversation" aria-label="Search sample conversations" />{query && <button type="button" className="clear-search" aria-label="Clear search" onClick={() => setQuery("")}><Icon name="x" size={14} /></button>}</label>
+        <div className="conversation-list">
+          {filteredThreads.map((thread) => {
+            const person = people.find((candidate) => candidate.name === thread.name || candidate.id === thread.id);
+            return <button type="button" className={`conversation-item${thread.id === activeId ? " active" : ""}`} key={thread.id} onClick={() => selectThread(thread.id)} aria-current={thread.id === activeId ? "true" : undefined}>
+              <span className="conversation-avatar">{person ? <Avatar initials={person.initials} name={person.name} color={person.color} size="sm" /> : <span className="thread-icon"><Icon name={thread.id.startsWith("draft-") ? "message" : "repo"} size={16} /></span>}</span>
+              <span className="conversation-copy"><span className="conversation-title">{thread.name}</span><span className="conversation-preview">{thread.preview}</span></span>
+              <span className="conversation-meta"><time>{thread.time}</time>{thread.unread > 0 && <i className="unread-badge">{thread.unread}</i>}</span>
+            </button>;
+          })}
+          {!filteredThreads.length && <p className="conversation-empty">No matching sample conversations.</p>}
+        </div>
+        <p className="local-note">Local demo · messages reset when you reload.</p>
+      </aside>
+
+      <section className="chat-main" aria-label={`Sample conversation with ${active.name}`}>
+        <header className="chat-header">
+          <button type="button" className="quiet-icon mobile-chat-back" aria-label="Show conversations" onClick={() => setShowList(true)}><Icon name="arrowRight" size={17} /></button>
+          <span className="chat-header-avatar">{participant ? <Avatar initials={participant.initials} name={participant.name} color={participant.color} size="sm" /> : <span className="thread-icon"><Icon name={active.id.startsWith("draft-") ? "message" : "repo"} size={16} /></span>}</span>
+          <div className="chat-header-copy"><h2>{active.name}</h2><span>{participant ? `${participant.role} · sample profile` : active.id.startsWith("draft-") ? "Local-only conversation" : `Sample project room · ${project?.repo || "Atlas Labs"}`}</span></div>
+          <button type="button" className={`quiet-icon${showDetails ? " selected" : ""}`} aria-label="Toggle conversation references" aria-expanded={showDetails} onClick={() => setShowDetails((value) => !value)}><Icon name="info" size={17} /></button>
+        </header>
+        <div className="message-history" role="log" aria-live="polite" aria-relevant="additions">
+          <div className="message-day-divider"><span>Sample conversation · local only</span></div>
+          {messages.map((message) => <article key={message.id} className={`message-row${message.mine ? " message-mine" : ""}`}>
+            {!message.mine && <Avatar initials={participant?.initials || message.from.slice(0, 2).toUpperCase()} name={message.from} color={participant?.color || "mint"} size="xs" />}
+            <div className="message-content"><div className="message-sender">{message.mine ? "You" : message.from}<time>{message.time}</time></div><p className="message-bubble">{message.text}</p></div>
+            {message.mine && <Avatar initials="MC" name="Maya Chen" color="mint" size="xs" />}
+          </article>)}
+          {!messages.length && <div className="message-empty"><strong>This sample conversation is empty.</strong><p>Add a local message below; it won’t be sent.</p></div>}
+          <div ref={messageEndRef} />
+        </div>
+        <form className="message-composer" onSubmit={addLocalMessage}>
+          <label className="composer-label" htmlFor="message-draft">Add a local demo message</label>
+          <div className="composer-box"><textarea id="message-draft" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="This stays in the current page…" rows={2} /><div className="composer-actions"><span>Local only · Enter to add</span><button type="submit" className="send-button" disabled={!draft.trim()} aria-label="Add local message"><Icon name="arrowUpRight" size={16} /></button></div></div>
+        </form>
       </section>
-    </>
-  );
+
+      <aside className="chat-details">
+        <div className="details-heading"><h2>Related entries</h2><button type="button" className="quiet-icon mobile-details-close" aria-label="Close references" onClick={() => setShowDetails(false)}><Icon name="x" size={17} /></button></div>
+        {participant ? <><button type="button" className="detail-person" onClick={() => { window.location.hash = `profile/${participant.id}`; }}><Avatar initials={participant.initials} name={participant.name} color={participant.color} size="lg" /><strong>{participant.name}</strong><span>{participant.role}</span><Icon name="arrowUpRight" size={14} /></button><p className="detail-caption">Sample profile · {participant.team}</p><div className="details-divider" /><h3>Shared project entries</h3><div className="shared-projects">{projects.filter((item) => item.team.includes(participant.initials)).slice(0, 4).map((item) => <button type="button" key={item.id} onClick={() => { window.location.hash = "projects"; }}><Icon name="repo" size={14} /><span>{item.name}</span><Icon name="arrowUpRight" size={12} /></button>)}</div></> : <><h3>{active.name}</h3><p>{active.id.startsWith("draft-") ? "New local demo conversation" : "Sample project room"}</p><div className="details-divider" /><h3>Project reference</h3><button type="button" className="cross-reference" onClick={() => { window.location.hash = "projects"; }}><Icon name="repo" size={14} /> {project?.repo || "Atlas Labs"}</button><div className="details-divider" /><h3>Sample members</h3><div className="details-people">{(project?.team || ["MC", "EB", "AO"]).slice(0, 4).map((initials) => { const person = people.find((candidate) => candidate.initials === initials); return person ? <button key={person.id} type="button" aria-label={`Open ${person.name}'s sample profile`} onClick={() => { window.location.hash = `profile/${person.id}`; }}><Avatar initials={person.initials} name={person.name} color={person.color} size="sm" /></button> : null; })}</div></>}
+        <p className="local-note">Example messages are not private or delivered; they are sample content in this demo.</p>
+      </aside>
+    </section>
+  </>;
 }

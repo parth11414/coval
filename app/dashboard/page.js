@@ -124,13 +124,14 @@ export default function Home() {
 
   return (
     <AuthGate>
-    <DashboardShell
+    {(signOut) => <DashboardShell
       route={route}
       theme={theme}
       drawerOpen={drawerOpen}
       searchOpen={searchOpen}
       settingsOpen={settingsOpen}
       toast={toast}
+      onSignOut={signOut}
       onDrawerToggle={() => setDrawerOpen((open) => !open)}
       onDrawerClose={() => setDrawerOpen(false)}
       onThemeToggle={() => {
@@ -150,7 +151,7 @@ export default function Home() {
       }}
     >
       {page}
-    </DashboardShell>
+    </DashboardShell>}
     </AuthGate>
   );
 }

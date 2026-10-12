@@ -3,50 +3,63 @@
 import { useMemo, useState } from "react";
 import Icon from "./dashboard-icon";
 import { people, projects } from "../data/dashboard-data";
-import { Avatar, AvatarStack, PageHeading } from "./ui";
+import { Avatar, PageHeading } from "./ui";
 
 const allStacks = [...new Set(projects.flatMap((project) => project.stack))];
 
 export default function ProjectsPage({ navigate }) {
   const [query, setQuery] = useState("");
-  const [stack, setStack] = useState("All");
+  const [stack, setStack] = useState("All technologies");
   const [selectedProject, setSelectedProject] = useState(null);
   const [showAllFilters, setShowAllFilters] = useState(false);
-  const filters = ["All", ...allStacks];
+  const filters = ["All technologies", ...allStacks];
   const visibleFilters = showAllFilters ? filters : filters.slice(0, 13);
   const filtered = useMemo(() => projects.filter((project) => {
-    const matchesQuery = `${project.name} ${project.repo} ${project.description} ${project.stack.join(" ")}`.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (stack === "All" || project.stack.includes(stack));
+    const text = `${project.name} ${project.repo} ${project.description} ${project.stack.join(" ")}`.toLowerCase();
+    return text.includes(query.trim().toLowerCase()) && (stack === "All technologies" || project.stack.includes(stack));
   }), [query, stack]);
 
-  return (
-    <>
-      <PageHeading eyebrow="REPOSITORY INTELLIGENCE / 12 REPOS" title="Projects with people attached." description="Every repository is a collaboration graph. Hover for the signal; follow a contributor to their profile." action={<span className="live-count"><i /> 7 SHIPPING</span>} />
-      <div className="project-toolbar">
-        <label className="search-field project-search"><Icon name="search" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search repositories…" aria-label="Search projects" /></label>
-        <div className="filter-pills project-filters" aria-label="Filter repositories by technology">
-          {visibleFilters.map((filter) => <button key={filter} type="button" className={`filter-pill${stack === filter ? " selected" : ""}`} aria-pressed={stack === filter} onClick={() => setStack(filter)}>{filter}</button>)}
-          {filters.length > visibleFilters.length && <button type="button" className="filter-pill" onClick={() => setShowAllFilters(true)}>+{filters.length - visibleFilters.length} more</button>}
-        </div>
+  return <>
+    <PageHeading title="Project entries." description="Search the sample repository index, compare its technology tags, and follow a contributor into their profile." action={<span className="record-count">{filtered.length} of {projects.length} repositories</span>} />
+    <div className="directory-tools project-tools">
+      <label className="search-field"><Icon name="search" size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a repository or topic" aria-label="Search sample projects" />{query && <button type="button" className="clear-search" aria-label="Clear search" onClick={() => setQuery("")}><Icon name="x" size={15} /></button>}</label>
+      <div className="filter-pills" aria-label="Filter sample repositories by technology">
+        {visibleFilters.map((filter) => <button key={filter} type="button" className={`filter-pill${stack === filter ? " selected" : ""}`} aria-pressed={stack === filter} onClick={() => setStack(filter)}>{filter}</button>)}
+        {filters.length > visibleFilters.length && <button type="button" className="filter-pill filter-more" onClick={() => setShowAllFilters(true)}>Show {filters.length - visibleFilters.length} more</button>}
       </div>
-      {filtered.length ? <div className="projects-grid">
-        {filtered.map((project) => (
-          <article key={project.id} className="project-card">
-            <div className="project-card-top"><span className="repo-icon"><Icon name="repo" size={18} /></span><span className={`project-status status-${project.status.toLowerCase()}`}><i />{project.status.toUpperCase()}</span></div>
-            <button type="button" className="project-path" onClick={() => setSelectedProject(project)}>{project.repo}<Icon name="arrowUpRight" size={15} /></button>
-            <p className="project-description">{project.description}</p>
-            <div className="project-tags">{project.stack.slice(0, 3).map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}</div>
-            <div className="project-card-bottom"><span><Icon name="star" size={15} /> {project.stars}</span><span><Icon name="clock" size={15} /> {project.updated}</span><AvatarStack initials={project.team} /></div>
-            <div className="project-hover">
-              <p>{project.description}</p>
-              <div className="project-tags">{project.stack.map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}</div>
-              <div className="hover-contributors"><span>CONTRIBUTORS</span><div>{project.team.slice(0, 5).map((initials) => {const person = people.find((candidate) => candidate.initials === initials);return <button key={initials} type="button" aria-label={person?.name || initials} title={person?.name || initials} onClick={() => person && navigate(`profile/${person.id}`)}><Avatar initials={initials} name={person?.name || initials} color={person?.color || "mint"} size="sm" /></button>;})}</div><small>{project.team.length} people · click to explore</small></div>
-            </div>
-          </article>
-        ))}
-      </div> : <div className="empty-state"><Icon name="repo" size={22} /><strong>No repositories found</strong><p>Adjust the search or technology filter.</p></div>}
-      <p className="project-footer-note">Hover any repository to inspect contributors and contribution share <i>·</i> {filtered.length} / {projects.length} repositories</p>
-      {selectedProject && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedProject(null); }} role="presentation"><section className="project-dialog" role="dialog" aria-modal="true" aria-label={`${selectedProject.name} repository details`}><button type="button" className="icon-button dialog-close" aria-label="Close repository details" onClick={() => setSelectedProject(null)}><Icon name="x" /></button><span className={`project-status status-${selectedProject.status.toLowerCase()}`}><i />{selectedProject.status.toUpperCase()}</span><span className="eyebrow">REPOSITORY / APPLIED AI</span><h2>{selectedProject.repo}</h2><p>{selectedProject.description}</p><div className="project-dialog-meta"><span><Icon name="star" size={16} /> {selectedProject.stars} stars</span><span><Icon name="clock" size={16} /> UPDATED {selectedProject.updated.toUpperCase()}</span></div><span className="eyebrow">TECHNOLOGY STACK</span><div className="project-tags">{selectedProject.stack.map((tag) => <span key={tag} className="tech-tag">{tag}</span>)}</div><span className="eyebrow">CONTRIBUTORS / CONTRIBUTION SHARE</span>{selectedProject.team.slice(0, 5).map((initials, index) => {const person = people.find((candidate) => candidate.initials === initials);return <div className="contributor-line" key={initials}><Avatar initials={initials} name={person?.name || initials} color={person?.color || "mint"} size="sm" /><span>{person?.name || initials}</span><strong>{[37, 24, 18, 13, 8][index]}%</strong></div>;})}<small className="demo-disclaimer">Repository details and contribution percentages are illustrative demo data.</small></section></div>}
-    </>
-  );
+    </div>
+
+    {filtered.length ? <section className="project-index" aria-label="Project directory">
+      <div className="index-column-head"><span>Repository</span><span>Stage</span><span>Technology notes</span><span>Contributors</span><span>Star count</span></div>
+      {filtered.map((project, index) => <article className="project-index-row" key={project.id}>
+        <span className="entry-number">{String(index + 1).padStart(2, "0")}</span>
+        <div className="project-index-main">
+          <button type="button" className="entry-title" onClick={() => setSelectedProject(project)}>{project.name}<Icon name="arrowUpRight" size={14} /></button>
+          <span className="entry-repo">{project.repo}</span>
+          <p>{project.description}</p>
+        </div>
+        <span className={`record-status status-${project.status.toLowerCase()}`}>{project.status}</span>
+        <div className="entry-tags">{project.stack.map((tag) => <span className="tech-tag" key={tag}>{tag}</span>)}</div>
+        <div className="project-index-team">{project.team.slice(0, 4).map((initials) => {
+          const person = people.find((candidate) => candidate.initials === initials);
+          return person ? <button key={person.id} type="button" aria-label={`Open ${person.name}'s sample profile`} title={person.name} onClick={() => navigate(`profile/${person.id}`)}><Avatar initials={person.initials} name={person.name} color={person.color} size="xs" /></button> : null;
+        })}</div>
+        <span className="sample-count"><strong>{project.stars}</strong><small>sample stars</small></span>
+        <button type="button" className="quiet-icon project-open-button" aria-label={`Open ${project.name} details`} onClick={() => setSelectedProject(project)}><Icon name="arrowUpRight" size={15} /></button>
+      </article>)}
+    </section> : <div className="empty-state"><Icon name="repo" size={21} /><strong>No repository matches that entry.</strong><p>Try a different name, topic, or technology.</p><button type="button" className="button button-secondary" onClick={() => { setQuery(""); setStack("All technologies"); }}>Clear filters</button></div>}
+    <p className="page-footnote">Repository descriptions, stages, stars, and updates are illustrative demo data.</p>
+
+    {selectedProject && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedProject(null); }}><section className="record-dialog" role="dialog" aria-modal="true" aria-labelledby="project-detail-title">
+      <button type="button" className="icon-button dialog-close" aria-label="Close repository details" onClick={() => setSelectedProject(null)}><Icon name="x" size={18} /></button>
+      <span className={`record-status status-${selectedProject.status.toLowerCase()}`}>Sample stage · {selectedProject.status}</span>
+      <h2 id="project-detail-title">{selectedProject.name}</h2><p className="entry-repo">{selectedProject.repo}</p><p>{selectedProject.description}</p>
+      <div className="record-detail-row"><span>Technologies</span><div className="entry-tags">{selectedProject.stack.map((tag) => <span className="tech-tag" key={tag}>{tag}</span>)}</div></div>
+      <div className="record-detail-row"><span>Sample collaborators</span><div className="dialog-contributors">{selectedProject.team.map((initials) => {
+        const person = people.find((candidate) => candidate.initials === initials);
+        return person ? <button type="button" key={person.id} className="person-reference" onClick={() => navigate(`profile/${person.id}`)}><Avatar initials={person.initials} name={person.name} color={person.color} size="sm" /><span className="person-reference-copy"><strong>{person.name}</strong><small>{person.role}</small></span><Icon name="arrowUpRight" size={14} /></button> : null;
+      })}</div></div>
+      <p className="page-footnote">All repository details shown here are illustrative demo data.</p>
+    </section></div>}
+  </>;
 }

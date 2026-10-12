@@ -2,40 +2,46 @@
 
 import { useMemo, useState } from "react";
 import Icon from "./dashboard-icon";
-import { people, teams, fmt } from "../data/dashboard-data";
-import { Avatar, MetricCard, PageHeading } from "./ui";
+import { people, projects, teams } from "../data/dashboard-data";
+import { Avatar, PageHeading } from "./ui";
 
 export default function PeoplePage({ navigate }) {
   const [query, setQuery] = useState("");
   const [team, setTeam] = useState("All people");
   const filtered = useMemo(() => people.filter((person) => {
-    const matchesQuery = `${person.name} ${person.role} ${person.team}`.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (team === "All people" || person.team === team);
+    const text = `${person.name} ${person.role} ${person.team} ${person.location}`.toLowerCase();
+    return text.includes(query.trim().toLowerCase()) && (team === "All people" || person.team === team);
   }), [query, team]);
 
-  return (
-    <>
-      <PageHeading eyebrow="PEOPLE / ENGINEERING" title="Engineering, connected." description="12 practitioners. 4 disciplines. One shared delivery graph." action={<button type="button" className="button button-quiet" onClick={() => navigate("network")}><Icon name="network" size={17} /> Explore network</button>} />
-      <section className="summary-grid" aria-label="Engineering team summary">
-        <MetricCard label="PEOPLE" value="12" detail="across 4 teams" />
-        <MetricCard label="COMBINED COMMITS" value={fmt(14128)} detail="+12% this quarter" trend="+12%" />
-        <MetricCard label="SHIPPED PRS" value="638" detail="86 merged this month" />
-        <MetricCard label="ACTIVE SQUADS" value="4" detail="across 3 disciplines" />
-      </section>
-      <div className="directory-toolbar">
-        <label className="search-field"><Icon name="search" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search people…" aria-label="Search people" /></label>
-        <div className="filter-pills" aria-label="Filter people by team">
-          {["All people", ...teams.map((item) => item.name)].map((name) => <button key={name} type="button" className={`filter-pill${team === name ? " selected" : ""}`} onClick={() => setTeam(name)}>{name}</button>)}
-        </div>
+  return <>
+    <PageHeading title="People you can build with." description="Browse the sample team by name or discipline, then follow a person into their projects and recent work." action={<span className="record-count">{filtered.length} of {people.length} profiles</span>} />
+    <div className="directory-tools">
+      <label className="search-field"><Icon name="search" size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a person, role, or city" aria-label="Search sample people" />{query && <button type="button" className="clear-search" aria-label="Clear search" onClick={() => setQuery("")}><Icon name="x" size={15} /></button>}</label>
+      <div className="filter-pills" aria-label="Filter sample people by team">
+        {["All people", ...teams.map((item) => item.name)].map((name) => <button key={name} type="button" className={`filter-pill${team === name ? " selected" : ""}`} aria-pressed={team === name} onClick={() => setTeam(name)}>{name}</button>)}
       </div>
-      {filtered.length ? <div className="people-grid">
-        {filtered.map((person) => <article className="person-card" key={person.id}>
-          <div className="person-card-head"><button type="button" className="person-card-avatar-button" aria-label={`View ${person.name} profile`} onClick={() => navigate(`profile/${person.id}`)}><Avatar initials={person.initials} name={person.name} color={person.color} size="lg" online={person.status === "Online"} /></button><span className="person-status"><i className={person.status === "Online" ? "dot-online" : "dot-away"} />{person.status}</span></div>
-          <div className="person-card-identity"><h2>{person.name}</h2><p className="person-role">{person.role}</p><span className="team-tag">{person.team}</span></div>
-          <div className="person-card-stats"><span><b>{fmt(person.commits)}</b><small>commits</small></span><span><b>{person.prs}</b><small>merged PRs</small></span><span><b>{person.score}</b><small>signal</small></span></div>
-          <div className="person-card-footer"><span><Icon name="activity" size={14} /> {person.location}</span><button type="button" className="quiet-icon" aria-label={`View ${person.name} profile`} onClick={() => navigate(`profile/${person.id}`)}><Icon name="arrowUpRight" size={16} /></button></div>
-        </article>)}
-      </div> : <div className="empty-state"><Icon name="users" size={22} /><strong>No teammates match</strong><p>Try another name or team.</p></div>}
-    </>
-  );
+    </div>
+    {filtered.length ? <section className="people-index" aria-label="People directory">
+      <div className="index-column-head"><span>Person</span><span>Discipline</span><span>Sample project references</span><span>Contributions</span></div>
+      {filtered.map((person, index) => {
+        const memberProjects = projects.filter((project) => project.team.includes(person.initials));
+        return <article className="people-index-row" key={person.id}>
+          <span className="entry-number">{String(index + 1).padStart(2, "0")}</span>
+          <button type="button" className="people-index-person" onClick={() => navigate(`profile/${person.id}`)}>
+            <Avatar initials={person.initials} name={person.name} color={person.color} size="md" />
+            <span><strong>{person.name}</strong><small>{person.role}</small></span>
+            <Icon name="arrowUpRight" size={14} />
+          </button>
+          <span className="person-team-reference">{person.team}<small>{person.location}</small></span>
+          <div className="project-reference-group">
+            {memberProjects.slice(0, 2).map((project) => <button type="button" key={project.id} className="cross-reference" onClick={() => navigate("projects")}><Icon name="repo" size={13} /> {project.name}</button>)}
+            {memberProjects.length > 2 && <span className="margin-note">+{memberProjects.length - 2} more</span>}
+            {!memberProjects.length && <span className="margin-note">No project references</span>}
+          </div>
+          <span className="sample-count"><strong>{person.commits.toLocaleString("en-US")}</strong><small>sample commits</small></span>
+        </article>;
+      })}
+    </section> : <div className="empty-state"><Icon name="users" size={21} /><strong>No people match that entry.</strong><p>Try a different name, role, location, or team.</p><button type="button" className="button button-secondary" onClick={() => { setQuery(""); setTeam("All people"); }}>Clear filters</button></div>}
+    <p className="page-footnote">Profiles and contribution counts are illustrative demo data.</p>
+  </>;
 }

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T00:00:00+05:30",
+  "title": "Design System: COVAL Solutions",
+  "extensions": {
+    "colorMeta": {
+      "sidebar": { "role": "neutral", "displayName": "Slate Rail", "canonical": "#202a33" },
+      "page": { "role": "neutral", "displayName": "Cool Page", "canonical": "#e9ece8" },
+      "paper": { "role": "neutral", "displayName": "Reading Paper", "canonical": "#f8f9f5" },
+      "ink": { "role": "neutral", "displayName": "Blue-Black Ink", "canonical": "#222c32" },
+      "blue": { "role": "primary", "displayName": "Fieldbook Blue", "canonical": "#345d7a" },
+      "copper": { "role": "secondary", "displayName": "Index Copper", "canonical": "#a75d3d" },
+      "green": { "role": "tertiary", "displayName": "Work Green", "canonical": "#53745f" },
+      "dark-blue": { "role": "primary", "displayName": "Dark Theme Blue", "canonical": "#9bc2d8" },
+      "dark-copper": { "role": "secondary", "displayName": "Dark Theme Copper", "canonical": "#e4a17c" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Page Display", "purpose": "Page titles and route introductions." },
+      "body": { "displayName": "Fieldbook Sans", "purpose": "Names, record copy, and interface reading." },
+      "label": { "displayName": "Index Mono", "purpose": "Counts, paths, dates, identifiers, and compact measurements." }
+    },
+    "shadows": [
+      { "name": "overlay", "value": "0 12px 32px rgb(24 34 38 / 12%)", "purpose": "Floated dialogs, drawers, and transient layers; dark theme uses 0 12px 32px rgb(0 0 0 / 32%)." }
+    ],
+    "motion": [
+      { "name": "state-transition", "value": "150ms ease", "purpose": "Color, background, border, and opacity state changes." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "Suppress smooth scrolling and reduce transitions and animations." }
+    ],
+    "breakpoints": [
+      { "name": "mobile-drawer", "value": "900px", "purpose": "Collapse persistent rail and multi-column layouts into mobile patterns." },
+      { "name": "narrow-phone", "value": "400px", "purpose": "Hide nonessential notification shortcut." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact filled action for the main choice in a local workflow.",
+      "html": "<button class=\"primary\">Open record</button>",
+      "css": ".primary { min-height: 36px; padding: 7px 12px; border: 1px solid var(--blue); background: var(--blue); color: #fff; font: 600 12px/1.4 Inter, sans-serif; cursor: pointer; transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease; } .primary:hover { border-color: color-mix(in srgb, var(--blue) 88%, black); background: color-mix(in srgb, var(--blue) 88%, black); } .primary:focus-visible { outline: 3px solid var(--copper); outline-offset: 3px; }"
+    },
+    {
+      "name": "Field Index Link",
+      "kind": "nav",
+      "description": "Persistent route link with a copper locator edge for the active destination.",
+      "html": "<a class=\"index-link\" href=\"#projects\"><span>Projects</span></a>",
+      "css": ".index-link { display: flex; min-height: 39px; align-items: center; padding: 7px 10px; border: 1px solid transparent; color: #b8c0bf; font: 400 13px/1.4 Inter, sans-serif; text-decoration: none; } .index-link:hover { background: rgb(255 255 255 / 7%); color: #f0f2ec; } .index-link:focus-visible { outline: 3px solid #a75d3d; outline-offset: 3px; }"
+    },
+    {
+      "name": "Demo Stamp",
+      "kind": "chip",
+      "description": "Persistent provenance marker for seeded sample workspace records.",
+      "html": "<span class=\"demo-stamp\"><i></i> Demo data</span>",
+      "css": ".demo-stamp { display: inline-flex; min-height: 25px; align-items: center; gap: 7px; padding: 3px 9px; border: 1px solid rgb(238 174 135 / 42%); color: #ffd0b0; font: 650 10px/1.4 Inter, sans-serif; } .demo-stamp i { width: 6px; height: 6px; border-radius: 50%; background: #eca77e; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Engineer’s Fieldbook",
+    "overview": "A shared engineering fieldbook connects project entries, contributor notes, and recent work through direct references. Cool paper, blue-black ink, ruled spacing, and restrained copper marks create a composed, scan-friendly workspace. All seeded records and signals remain clearly identified as demo data.",
+    "keyCharacteristics": ["Cool paper and precise blue-black reading ink", "Copper index marks and visible page tabs", "Sans reading with monospaced record metadata", "Direct people, project, and work cross-references", "Persistent demo provenance"],
+    "rules": [
+      { "name": "The Demo Signal Rule", "body": "Seeded states always carry explicit sample or demo context; never style demo activity as verified operational telemetry.", "section": "colors" },
+      { "name": "The Metadata Rule", "body": "Use mono for identifiers, timestamps, repository paths, and measures; use UI sans for names and explanatory prose.", "section": "typography" },
+      { "name": "The Paper-First Rule", "body": "Use tone and rules to organize resting content; use shadow only when a layer floats above the fieldbook.", "section": "elevation" }
+    ],
+    "dos": ["Connect people, projects, and work with direct cross-references.", "Keep demo provenance visible.", "Preserve local routes and interactions."],
+    "donts": ["Do not imply seeded activity or presence is live or verified.", "Do not replace the work-ledger overview with a generic analytics-card wall.", "Do not rely on color alone to communicate status."]
+  }
+}
